@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  postgres-mdm:
+    image: postgres:15
+    container_name: mdm_postgres
+    environment:
+      POSTGRES_DB: mdmdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - mdm_pgdata:/var/lib/postgresql/data
+
+  postgres-dem:
+    image: postgres:15
+    container_name: dem_postgres
+    environment:
+      POSTGRES_DB: demdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - dem_pgdata:/var/lib/postgresql/data
+
+  mdm-service:
+    build:
+      context: ./mdm-service
+      dockerfile: Dockerfile
+    container_name: mdm_service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-mdm
+
+  dem-service:
+    build:
+      context: ./dem-service
+      dockerfile: Dockerfile
+    container_name: dem_service
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres-dem
+
+volumes:
+  mdm_pgdata:
+  dem_pgdata:
