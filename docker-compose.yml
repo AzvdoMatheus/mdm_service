@@ -44,6 +44,8 @@ services:
       - "8081:8080"
     depends_on:
       - postgres-dem
+    volumes:
+      - ./downloads:/downloads
 
 volumes:
   mdm_pgdata:
