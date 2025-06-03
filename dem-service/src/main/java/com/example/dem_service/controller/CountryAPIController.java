@@ -5,41 +5,33 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.dem_service.dtos.CountryDTO;
 import com.example.dem_service.services.FetchService;
-import com.example.dem_service.services.JsonNormalizationService;
+import com.example.dem_service.services.NormalizeJsonService;
 import com.fasterxml.jackson.databind.JsonNode;
 
-/**
- * Endpoint que dispara o fetch + normalização (Country + Currency).
- * Ele retorna a própria lista de JsonNode trazida pelo provider, mas você
- * pode alterar para devolver a lista de Country ou qualquer outra coisa.
- */
 @RestController
 public class CountryAPIController {
 
     private final FetchService fetchService;
-    private final JsonNormalizationService normalizationService;
+    private final NormalizeJsonService normalizeJsonService;
 
-    public CountryAPIController(
-        FetchService fetchService,
-        JsonNormalizationService normalizationService
-    ) {
+    // Spring injetará ambos: FetchService e NormalizeJsonService
+    public CountryAPIController(FetchService fetchService,
+                                NormalizeJsonService normalizeJsonService) {
         this.fetchService = fetchService;
-        this.normalizationService = normalizationService;
+        this.normalizeJsonService = normalizeJsonService;
     }
 
     @GetMapping("/fetch")
-    public List<JsonNode> fetchAndNormalize() throws Exception {
-        // 1) Baixa o JSON bruto de todos os providers:
-        List<JsonNode> raw = fetchService.fetchFromAllProviders();
+    public List<CountryDTO> fetchAndNormalize() throws Exception {
+        // 1) Busca o JSON bruto de todos os providers (REST Countries, por exemplo)
+        List<JsonNode> rawCountries = fetchService.fetchFromAllProviders();
 
-        // 2) Normaliza e salva País + Moeda no banco:
-        if (!raw.isEmpty()) {
-            normalizationService.normalizeAndSave(raw);
-        }
+        // 2) Normaliza cada JsonNode para CountryDTO via NormalizeJsonService
+        List<CountryDTO> normalized = normalizeJsonService.normalizeCountries(rawCountries);
 
-        // 3) Retorna, a critério seu, o próprio JSON bruto ou
-        //    até mesmo uma nova coleção de Country salvos.
-        return raw;
+        // 3) Retorna a lista de CountryDTO para o cliente
+        return normalized;
     }
 }
