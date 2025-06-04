@@ -12,9 +12,6 @@ import com.example.dem_service.dtos.CountryDTO;
 import com.example.dem_service.dtos.CurrencyDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 
-/**
- * Serviço que converte a lista de JsonNode (vinda do FetchService) em objetos CountryDTO.
- */
 @Service   // <-- o Spring passará a enxergar esta classe como bean
 public class NormalizeJsonService {
 

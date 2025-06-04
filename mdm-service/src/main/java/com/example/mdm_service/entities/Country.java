@@ -1,12 +1,16 @@
-package com.example.dem_service.entities;
+package com.example.mdm_service.entities;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +18,7 @@ import lombok.Setter;
 @Setter
 @Entity
 public class Country {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer countryId;
@@ -21,8 +26,8 @@ public class Country {
     @Column(nullable = false)
     private String countryName;
 
-    @Column(nullable = false, unique = true)
-    private String countryCode; 
+    @Column(nullable = false)
+    private String countryCode;
 
     @Column(nullable = false)
     private String capitalCity;
@@ -37,13 +42,21 @@ public class Country {
     private float area;
 
     @Column(nullable = false)
-    private String continent; 
+    private String continent;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @OneToMany(
+        mappedBy = "country",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    private List<Currency> currencies;
 
     public Country() {}
 
@@ -55,6 +68,7 @@ public class Country {
         int population,
         float area,
         String continent,
+        List<Currency> currencies,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
     ) {
@@ -67,6 +81,6 @@ public class Country {
         this.continent = continent;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.currencies = currencies;
     }
-
 }

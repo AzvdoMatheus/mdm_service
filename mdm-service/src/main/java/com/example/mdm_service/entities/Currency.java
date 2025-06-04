@@ -1,12 +1,13 @@
-package com.example.dem_service.entities;
-
-import java.time.LocalDateTime;
+package com.example.mdm_service.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,23 +20,19 @@ public class Currency {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer currencyId;
 
-    @Column(nullable = false, unique = true)
-    private String currencyCode;   
+    @Column(nullable = false)
+    private String currencyCode;
 
     @Column(nullable = false)
-    private String currencyName;  
+    private String currencyName;
 
     @Column(nullable = false)
-    private String currencySymbol; 
+    private String currencySymbol;
 
-    @Column(nullable = false)
-    private Integer countryId;     
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    // Removido countryId primitivo; agora mapeamos com ManyToOne:
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id", nullable = false)
+    private Country country;
 
     public Currency() {}
 
@@ -43,15 +40,11 @@ public class Currency {
         String currencyCode,
         String currencyName,
         String currencySymbol,
-        Integer countryId,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        Country country
     ) {
         this.currencyCode = currencyCode;
         this.currencyName = currencyName;
         this.currencySymbol = currencySymbol;
-        this.countryId = countryId;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.country = country;
     }
 }
