@@ -9,12 +9,12 @@ public record CurrencyDTO(
     String currencyName,
     String currencySymbol
 ) {
-    public Currency toEntity(Country parent) {
+    public Currency toEntity(Country country) {
         Currency c = new Currency();
         c.setCurrencyCode(this.currencyCode());
         c.setCurrencyName(this.currencyName());
         c.setCurrencySymbol(this.currencySymbol());
-        c.setCountry(parent);
+        c.setCountry(country);
         return c;
     }
 
